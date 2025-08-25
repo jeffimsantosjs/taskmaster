@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MateriaPrima {
+  id            String   @id @default(cuid())
+  nome          String
+  unidade       String
+  estoqueAtual  Int      @default(0)
+  custoUnitario Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  itensReceita  ItemReceita[]
+}
+
+model Receita {
+  id            String   @id @default(cuid())
+  nome          String
+  descricao     String?
+  estoqueAtual  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  itens         ItemReceita[]
+}
+
+model ItemReceita {
+  id             String       @id @default(cuid())
+  receitaId      String
+  materiaPrimaId String
+  quantidade     Float
+
+  receita        Receita      @relation(fields: [receitaId], references: [id])
+  materiaPrima   MateriaPrima @relation(fields: [materiaPrimaId], references: [id])
+}
+
+model Produto {
+  id            String   @id @default(cuid())
+  nome          String
+  precoVenda    Float    @default(0)
+  estoqueAtual  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
